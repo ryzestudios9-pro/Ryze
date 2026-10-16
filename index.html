@@ -45,39 +45,52 @@
         <polygon points="50,20 90,80 50,80" fill-opacity="0.5" />
       </svg>
       <h1 class="font-display text-2xl font-bold tracking-wider text-white">RYZE</h1>
-      <p class="text-xs text-slate-400 max-w-xs">High-Speed Mobile AI Agent connected with Google Search.</p>
+      <p class="text-xs text-slate-400 max-w-xs">High-Speed Mobile AI Agent powered by Gemini 2.5.</p>
     </div>
   </main>
 
   <!-- Input Area -->
   <footer class="p-3 bg-surface border-t border-border shrink-0 pb-6">
-    <form id="chat-form" onsubmit="event.preventDefault(); handleSend();" class="flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2">
+    <div class="flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2">
       <input type="text" id="user-input" placeholder="Ask RYZE anything..." autocomplete="off" class="flex-1 bg-transparent text-sm text-white focus:outline-none py-1">
-      <button type="submit" id="send-btn" class="bg-slate-200 text-black p-2 rounded-full font-bold hover:bg-white transition-all shrink-0">
+      <button id="send-btn" type="button" class="bg-slate-200 text-black p-2 rounded-full font-bold hover:bg-white transition-all shrink-0">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
-    </form>
+    </div>
   </footer>
 
   <script>
     const chatBox = document.getElementById('chat-box');
     const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
 
-    function handleSend() {
+    function sendMessage() {
       const text = userInput.value.trim();
       if (!text) return;
 
       appendMessage('user', text);
       userInput.value = '';
-      
-      // Typing indicator
+
       const loadingId = appendLoading();
 
       setTimeout(() => {
         removeLoading(loadingId);
         generateResponse(text);
-      }, 600);
+      }, 500);
     }
+
+    sendBtn.addEventListener('click', sendMessage);
+    sendBtn.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      sendMessage();
+    });
+
+    userInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
 
     function appendMessage(sender, text) {
       const msgDiv = document.createElement('div');
@@ -111,9 +124,9 @@
     }
 
     function generateResponse(query) {
-      let reply = "I'm RYZE! " + query + " received. I can search live info, help you write code, or answer any questions quickly!";
+      let reply = "I'm RYZE! " + query + " received. I can answer questions, generate code, or help you build projects.";
       if (query.toLowerCase().includes('hi') || query.toLowerCase().includes('hello')) {
-        reply = "Hello! How can I help you today?";
+        reply = "Hello! I'm online and ready. What are we working on today?";
       }
       appendMessage('bot', reply);
     }
