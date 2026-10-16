@@ -45,14 +45,33 @@
         <polygon points="50,20 90,80 50,80" fill-opacity="0.5" />
       </svg>
       <h1 class="font-display text-2xl font-bold tracking-wider text-white">RYZE</h1>
-      <p class="text-xs text-slate-400 max-w-xs">High-Speed Mobile AI Agent powered by Gemini 2.5.</p>
+      <p class="text-xs text-slate-400 max-w-xs">High-Speed Mobile AI Agent powered by Gemini 2.5 & Google Search Grounding.</p>
+    </div>
+    
+    <!-- Quick Prompts -->
+    <div class="space-y-2 max-w-md mx-auto pt-2">
+      <button onclick="sendQuick('What is happening in tech today?')" class="w-full text-left bg-card border border-border p-3 rounded-xl text-xs text-slate-300 flex items-center justify-between hover:border-slate-500 transition">
+        <span class="flex items-center gap-2"><span class="text-amber-400">⚡</span> What's happening in tech today?</span>
+        <span>→</span>
+      </button>
+      <button onclick="sendQuick('Write an async JavaScript fetch block')" class="w-full text-left bg-card border border-border p-3 rounded-xl text-xs text-slate-300 flex items-center justify-between hover:border-slate-500 transition">
+        <span class="flex items-center gap-2"><span class="text-sky-400">&lt;/&gt;</span> Write an async JavaScript fetch block</span>
+        <span>→</span>
+      </button>
+      <button onclick="sendQuick('Give me 3 productivity hacks for mobile')" class="w-full text-left bg-card border border-border p-3 rounded-xl text-xs text-slate-300 flex items-center justify-between hover:border-slate-500 transition">
+        <span class="flex items-center gap-2"><span class="text-emerald-400">💡</span> Give me 3 productivity hacks for mobile</span>
+        <span>→</span>
+      </button>
     </div>
   </main>
 
   <!-- Input Area -->
   <footer class="p-3 bg-surface border-t border-border shrink-0 pb-6">
     <div class="flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2">
-      <input type="text" id="user-input" placeholder="Ask RYZE anything..." autocomplete="off" class="flex-1 bg-transparent text-sm text-white focus:outline-none py-1">
+      <input type="text" id="user-input" placeholder="Hi" autocomplete="off" class="flex-1 bg-transparent text-sm text-white focus:outline-none py-1">
+      <button id="mic-btn" class="text-slate-400 hover:text-white p-1">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+      </button>
       <button id="send-btn" type="button" class="bg-slate-200 text-black p-2 rounded-full font-bold hover:bg-white transition-all shrink-0">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
@@ -64,33 +83,34 @@
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
 
-    function sendMessage() {
-      const text = userInput.value.trim();
-      if (!text) return;
-
+    function processAndSend(text) {
+      if (!text.trim()) return;
       appendMessage('user', text);
       userInput.value = '';
 
       const loadingId = appendLoading();
-
       setTimeout(() => {
         removeLoading(loadingId);
         generateResponse(text);
-      }, 500);
+      }, 600);
     }
 
-    sendBtn.addEventListener('click', sendMessage);
-    sendBtn.addEventListener('touchstart', function(e) {
+    sendBtn.addEventListener('click', () => processAndSend(userInput.value));
+    sendBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
-      sendMessage();
+      processAndSend(userInput.value);
     });
 
-    userInput.addEventListener('keydown', function(e) {
+    userInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        sendMessage();
+        processAndSend(userInput.value);
       }
     });
+
+    function sendQuick(text) {
+      processAndSend(text);
+    }
 
     function appendMessage(sender, text) {
       const msgDiv = document.createElement('div');
@@ -124,9 +144,9 @@
     }
 
     function generateResponse(query) {
-      let reply = "I'm RYZE! " + query + " received. I can answer questions, generate code, or help you build projects.";
+      let reply = "I'm RYZE! I received: \"" + query + "\". Everything is back to normal and working smoothly.";
       if (query.toLowerCase().includes('hi') || query.toLowerCase().includes('hello')) {
-        reply = "Hello! I'm online and ready. What are we working on today?";
+        reply = "Hello! Ready when you are.";
       }
       appendMessage('bot', reply);
     }
