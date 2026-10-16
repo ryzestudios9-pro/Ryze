@@ -1,382 +1,130 @@
-
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="h-full dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>RYZE Mobile AI</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        ryze: {
-                            bg: '#050505',
-                            card: '#0d0e12',
-                            surface: '#151821',
-                            border: '#1f2430',
-                            silver: '#D1D5DB',
-                            silverLight: '#F3F4F6',
-                            silverMuted: '#9CA3AF',
-                            accent: '#38BDF8'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-                        logo: ['Orbitron', 'sans-serif']
-                    }
-                }
-            }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>RYZE - AI Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Space Grotesk', 'sans-serif'] },
+          colors: { oled: '#000000', surface: '#0d0e12', card: '#14161d', border: '#232733', accent: '#e2e8f0' }
         }
-    </script>
-    <!-- FontAwesome & Google Fonts -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-    <!-- Marked.js for HTML Markdown parsing -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <style>
-        * {
-            -webkit-tap-highlight-color: transparent;
-            box-sizing: border-box;
-            touch-action: manipulation;
-        }
-
-        html, body {
-            background-color: #000000;
-            color: #f3f4f6;
-            height: 100vh;
-            height: 100dvh;
-            width: 100vw;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: 'Inter', sans-serif;
-        }
-
-        /* Hide scrollbars for clean app feel */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .ryze-logo-text {
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 0.25em;
-        }
-
-        /* Safe area spacing for mobile notches & bottom home bar */
-        .pb-safe {
-            padding-bottom: max(12px, env(safe-area-inset-bottom));
-        }
-
-        /* Content Markdown Formatting */
-        .message-content {
-            user-select: text;
-            -webkit-user-select: text;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-        }
-        .message-content p { margin-bottom: 0.5rem; line-height: 1.5; }
-        .message-content p:last-child { margin-bottom: 0; }
-        .message-content pre { 
-            background: #000000; 
-            padding: 0.75rem; 
-            border-radius: 0.75rem; 
-            border: 1px solid #1f2430; 
-            overflow-x: auto; 
-            margin: 0.5rem 0; 
-            font-size: 0.8rem; 
-            position: relative;
-        }
-        .message-content code { 
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; 
-            background: rgba(255,255,255,0.08); 
-            padding: 0.15rem 0.35rem; 
-            border-radius: 0.3rem; 
-            font-size: 0.85em; 
-            color: #38bdf8;
-        }
-        .message-content pre code { background: transparent; padding: 0; color: inherit; }
-        .message-content ul { list-style-type: disc; margin-left: 1.2rem; margin-bottom: 0.5rem; }
-        .message-content ol { list-style-type: decimal; margin-left: 1.2rem; margin-bottom: 0.5rem; }
-        .message-content a { color: #38bdf8; text-decoration: underline; }
-
-        /* Smooth Drawer slide */
-        .drawer-slide {
-            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        /* Pulse glowing cursor */
-        .streaming-cursor::after {
-            content: '▋';
-            display: inline-block;
-            margin-left: 2px;
-            animation: pulse-cursor 0.7s infinite;
-            color: #d1d5db;
-        }
-        @keyframes pulse-cursor {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* Mic Pulsing */
-        .mic-active {
-            animation: pulse-mic 1.2s infinite;
-            background-color: #ef4444 !important;
-            color: #ffffff !important;
-        }
-        @keyframes pulse-mic {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-    </style>
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #000; color: #f3f4f6; -webkit-tap-highlight-color: transparent; }
+    .chat-container { height: calc(100dvh - 140px); }
+  </style>
 </head>
-<body class="flex justify-center items-center bg-black">
+<body class="h-full flex flex-col justify-between overflow-hidden">
 
-    <!-- MOBILE CONTAINER (Max 430px for native app viewport) -->
-    <div class="w-full max-w-[430px] h-full flex flex-col bg-ryze-bg relative shadow-2xl overflow-hidden border-x border-ryze-border/30">
-
-        <!-- HEADER -->
-        <header class="h-14 bg-black/90 backdrop-blur-md border-b border-ryze-border flex items-center justify-between px-3.5 z-20 shrink-0">
-            <button id="openDrawerBtn" aria-label="Open History" class="w-11 h-11 flex items-center justify-center text-slate-300 active:scale-90 transition rounded-full hover:bg-ryze-surface">
-                <i class="fa-solid fa-bars-staggered text-base"></i>
-            </button>
-
-            <!-- RYZE BRAND & LOGO -->
-            <div class="flex items-center space-x-2 cursor-pointer" id="brandHeader">
-                <!-- Dual Triangle Silver Logo -->
-                <svg class="w-6 h-6 shrink-0" viewBox="0 0 100 100" fill="none">
-                    <!-- Upward triangle left -->
-                    <polygon points="8,82 46,18 46,82" fill="#D1D5DB" />
-                    <!-- Downward triangle right -->
-                    <polygon points="54,18 92,82 54,82" fill="#9CA3AF" />
-                </svg>
-                <span class="ryze-logo-text text-base font-black text-white tracking-widest">RYZE</span>
-            </div>
-
-            <div class="flex items-center space-x-1">
-                <button id="clearChatBtn" title="Clear Current Chat" class="w-11 h-11 flex items-center justify-center text-slate-400 active:scale-90 transition rounded-full hover:bg-ryze-surface">
-                    <i class="fa-solid fa-rotate-right text-sm"></i>
-                </button>
-                <button id="newChatTopBtn" title="New Chat" class="w-11 h-11 flex items-center justify-center text-slate-200 active:scale-90 transition rounded-full hover:bg-ryze-surface">
-                    <i class="fa-solid fa-plus text-sm"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- STATUS STRIP -->
-        <div class="bg-ryze-card/90 border-b border-ryze-border/80 px-4 py-1.5 flex items-center justify-between text-[11px] shrink-0 z-10">
-            <div class="flex items-center space-x-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="engineBadge" class="text-slate-300 font-semibold tracking-wide">GEMINI 2.5 FLASH</span>
-            </div>
-            <button id="searchToggleBtn" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-ryze-surface border border-ryze-border active:scale-95 transition">
-                <i id="searchIcon" class="fa-solid fa-globe text-[10px] text-sky-400"></i>
-                <span id="searchLabel" class="text-slate-300 font-medium">Search: ON</span>
-            </button>
-        </div>
-
-        <!-- MAIN SCROLLABLE CHAT AREA -->
-        <div id="chatScrollArea" class="flex-1 overflow-y-auto px-3.5 py-3 space-y-3.5 min-h-0 relative no-scrollbar">
-            
-            <!-- WELCOME SCREEN -->
-            <div id="welcomeScreen" class="h-full flex flex-col items-center justify-center text-center px-3 py-6 my-auto">
-                <div class="w-20 h-20 mb-4 bg-ryze-card rounded-2xl border border-ryze-border flex items-center justify-center shadow-2xl relative group">
-                    <div class="absolute inset-0 bg-white/5 rounded-2xl blur-md"></div>
-                    <svg class="w-12 h-12 relative z-10" viewBox="0 0 100 100" fill="none">
-                        <polygon points="8,82 46,18 46,82" fill="#F3F4F6" />
-                        <polygon points="54,18 92,82 54,82" fill="#9CA3AF" />
-                    </svg>
-                </div>
-
-                <h1 class="ryze-logo-text text-2xl font-black text-white mb-1">RYZE</h1>
-                <p class="text-xs text-slate-400 max-w-[260px] mb-6 leading-relaxed">High-Speed Mobile AI Agent powered by Gemini 2.5 & Google Search Grounding.</p>
-
-                <!-- QUICK CHIPS (Initial Screen) -->
-                <div class="w-full space-y-2">
-                    <button class="quick-chip-btn w-full text-left p-3.5 rounded-xl bg-ryze-card border border-ryze-border active:bg-ryze-surface transition flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa-solid fa-bolt text-amber-400 text-xs"></i>
-                            <span class="text-xs font-medium text-slate-200">What's happening in tech today?</span>
-                        </div>
-                        <i class="fa-solid fa-arrow-right text-[10px] text-slate-600"></i>
-                    </button>
-                    <button class="quick-chip-btn w-full text-left p-3.5 rounded-xl bg-ryze-card border border-ryze-border active:bg-ryze-surface transition flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa-solid fa-code text-sky-400 text-xs"></i>
-                            <span class="text-xs font-medium text-slate-200">Write an async JavaScript fetch block</span>
-                        </div>
-                        <i class="fa-solid fa-arrow-right text-[10px] text-slate-600"></i>
-                    </button>
-                    <button class="quick-chip-btn w-full text-left p-3.5 rounded-xl bg-ryze-card border border-ryze-border active:bg-ryze-surface transition flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa-solid fa-lightbulb text-emerald-400 text-xs"></i>
-                            <span class="text-xs font-medium text-slate-200">Give me 3 productivity hacks for mobile</span>
-                        </div>
-                        <i class="fa-solid fa-arrow-right text-[10px] text-slate-600"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- MESSAGES WRAPPER -->
-            <div id="messagesContainer" class="space-y-3.5 hidden pb-2"></div>
-
-            <!-- TYPING INDICATOR -->
-            <div id="typingIndicator" class="hidden flex items-start space-x-2 pt-1 pb-2">
-                <div class="w-7 h-7 rounded-lg bg-ryze-card border border-ryze-border flex items-center justify-center shrink-0">
-                    <svg class="w-4 h-4" viewBox="0 0 100 100" fill="none">
-                        <polygon points="8,82 46,18 46,82" fill="#D1D5DB" />
-                        <polygon points="54,18 92,82 54,82" fill="#9CA3AF" />
-                    </svg>
-                </div>
-                <div class="bg-ryze-card border border-ryze-border px-3.5 py-2.5 rounded-2xl rounded-tl-none flex items-center space-x-2">
-                    <span class="text-xs text-slate-400 font-medium">RYZE is thinking</span>
-                    <div class="flex space-x-1">
-                        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
-                        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.4s]"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- FLOATING ACTION CHIPS (Visible during conversation) -->
-        <div id="floatingChips" class="px-3 py-1 bg-black/60 backdrop-blur-sm border-t border-ryze-border/40 shrink-0 hidden overflow-x-auto no-scrollbar">
-            <div class="flex space-x-1.5 py-0.5">
-                <button class="quick-chip-btn text-[11px] bg-ryze-card border border-ryze-border hover:border-slate-500 px-3 py-1 rounded-full text-slate-300 font-medium whitespace-nowrap active:scale-95 transition flex items-center space-x-1">
-                    <i class="fa-solid fa-bolt text-amber-400 text-[10px]"></i>
-                    <span>⚡ Quick Summary</span>
-                </button>
-                <button class="quick-chip-btn text-[11px] bg-ryze-card border border-ryze-border hover:border-slate-500 px-3 py-1 rounded-full text-slate-300 font-medium whitespace-nowrap active:scale-95 transition flex items-center space-x-1">
-                    <i class="fa-solid fa-globe text-sky-400 text-[10px]"></i>
-                    <span>🔍 Live Search</span>
-                </button>
-                <button class="quick-chip-btn text-[11px] bg-ryze-card border border-ryze-border hover:border-slate-500 px-3 py-1 rounded-full text-slate-300 font-medium whitespace-nowrap active:scale-95 transition flex items-center space-x-1">
-                    <i class="fa-solid fa-code text-purple-400 text-[10px]"></i>
-                    <span>💻 Code Snippet</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- INPUT FOOTER -->
-        <div class="p-3 bg-black border-t border-ryze-border shrink-0 z-20 pb-safe">
-            <form id="chatForm" class="flex items-center space-x-2 bg-ryze-card border border-ryze-border rounded-full px-3.5 py-1.5 focus-within:border-slate-400 transition">
-                <textarea 
-                    id="userInput" 
-                    rows="1" 
-                    placeholder="Ask RYZE anything..." 
-                    class="flex-1 bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none resize-none max-h-24 py-2"
-                ></textarea>
-                
-                <!-- Voice Mic Button -->
-                <button 
-                    type="button" 
-                    id="micBtn"
-                    title="Voice Input"
-                    class="w-9 h-9 rounded-full bg-ryze-surface border border-ryze-border text-slate-300 flex items-center justify-center active:scale-90 transition shrink-0"
-                >
-                    <i class="fa-solid fa-microphone text-xs"></i>
-                </button>
-
-                <!-- Send Button -->
-                <button 
-                    type="submit" 
-                    id="sendBtn"
-                    disabled
-                    class="w-9 h-9 rounded-full bg-slate-200 text-black flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed active:scale-90 transition shrink-0"
-                >
-                    <i class="fa-solid fa-arrow-up text-xs font-bold"></i>
-                </button>
-            </form>
-        </div>
-
-        <!-- HISTORY SIDE DRAWER -->
-        <div id="drawerBackdrop" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300"></div>
-
-        <div id="historyDrawer" class="drawer-slide fixed inset-y-0 left-0 w-4/5 max-w-[320px] bg-ryze-card border-r border-ryze-border z-50 flex flex-col transform -translate-x-full">
-            <div class="p-4 border-b border-ryze-border flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <svg class="w-6 h-6" viewBox="0 0 100 100" fill="none">
-                        <polygon points="8,82 46,18 46,82" fill="#D1D5DB" />
-                        <polygon points="54,18 92,82 54,82" fill="#9CA3AF" />
-                    </svg>
-                    <span class="ryze-logo-text text-base font-bold text-white">RYZE</span>
-                </div>
-                <button id="closeDrawerBtn" class="text-slate-400 p-2 active:scale-90 transition">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-
-            <div class="p-3">
-                <button id="drawerNewChatBtn" class="w-full py-3 px-4 bg-ryze-surface border border-ryze-border text-slate-100 rounded-xl font-medium text-xs flex items-center justify-center space-x-2 active:bg-ryze-border transition">
-                    <i class="fa-solid fa-plus text-xs"></i>
-                    <span>New Chat Session</span>
-                </button>
-            </div>
-
-            <div class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Saved History</div>
-            <div id="chatHistoryList" class="flex-1 overflow-y-auto px-3 space-y-1.5 no-scrollbar"></div>
-
-            <div class="p-3 border-t border-ryze-border pb-safe">
-                <button id="clearAllHistoryBtn" class="w-full py-2.5 text-xs text-red-400 flex items-center justify-center space-x-2 hover:bg-red-500/10 rounded-xl transition">
-                    <i class="fa-solid fa-trash-can text-xs"></i>
-                    <span>Clear All Conversations</span>
-                </button>
-            </div>
-        </div>
-
+  <!-- Header -->
+  <header class="h-14 border-b border-border bg-surface/90 backdrop-blur flex items-center justify-between px-4 shrink-0">
+    <div class="flex items-center gap-2">
+      <svg class="w-6 h-6 text-slate-200" viewBox="0 0 100 100" fill="currentColor">
+        <polygon points="10,80 50,20 50,80" />
+        <polygon points="50,20 90,80 50,80" fill-opacity="0.5" />
+      </svg>
+      <span class="font-display font-bold tracking-widest text-lg text-white">RYZE</span>
     </div>
+    <button onclick="clearChat()" class="text-xs text-slate-400 bg-card border border-border px-3 py-1.5 rounded-full hover:text-white">Clear</button>
+  </header>
 
-    <!-- MAIN APP JAVASCRIPT LOGIC -->
-    <script>
-        // State
-        let chats = JSON.parse(localStorage.getItem('ryze_mobile_chats') || '[]');
-        let currentChatId = localStorage.getItem('ryze_mobile_current_chat') || null;
-        let searchGroundingEnabled = true;
-        let isListening = false;
-        let recognition = null;
+  <!-- Chat Messages -->
+  <main id="chat-box" class="chat-container overflow-y-auto p-4 space-y-4 flex-1">
+    <div class="flex flex-col items-center justify-center my-6 text-center space-y-3">
+      <svg class="w-16 h-16 text-slate-300" viewBox="0 0 100 100" fill="currentColor">
+        <polygon points="10,80 50,20 50,80" />
+        <polygon points="50,20 90,80 50,80" fill-opacity="0.5" />
+      </svg>
+      <h1 class="font-display text-2xl font-bold tracking-wider text-white">RYZE</h1>
+      <p class="text-xs text-slate-400 max-w-xs">High-Speed Mobile AI Agent connected with Google Search.</p>
+    </div>
+  </main>
 
-        // Elements
-        const chatScrollArea = document.getElementById('chatScrollArea');
-        const welcomeScreen = document.getElementById('welcomeScreen');
-        const messagesContainer = document.getElementById('messagesContainer');
-        const floatingChips = document.getElementById('floatingChips');
-        const chatForm = document.getElementById('chatForm');
-        const userInput = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const micBtn = document.getElementById('micBtn');
-        const typingIndicator = document.getElementById('typingIndicator');
-        const searchToggleBtn = document.getElementById('searchToggleBtn');
-        const searchLabel = document.getElementById('searchLabel');
-        const searchIcon = document.getElementById('searchIcon');
+  <!-- Input Area -->
+  <footer class="p-3 bg-surface border-t border-border shrink-0 pb-6">
+    <form id="chat-form" onsubmit="event.preventDefault(); handleSend();" class="flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2">
+      <input type="text" id="user-input" placeholder="Ask RYZE anything..." autocomplete="off" class="flex-1 bg-transparent text-sm text-white focus:outline-none py-1">
+      <button type="submit" id="send-btn" class="bg-slate-200 text-black p-2 rounded-full font-bold hover:bg-white transition-all shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </form>
+  </footer>
 
-        const openDrawerBtn = document.getElementById('openDrawerBtn');
-        const closeDrawerBtn = document.getElementById('closeDrawerBtn');
-        const historyDrawer = document.getElementById('historyDrawer');
-        const drawerBackdrop = document.getElementById('drawerBackdrop');
-        const chatHistoryList = document.getElementById('chatHistoryList');
-        const newChatTopBtn = document.getElementById('newChatTopBtn');
-        const drawerNewChatBtn = document.getElementById('drawerNewChatBtn');
-        const clearChatBtn = document.getElementById('clearChatBtn');
-        const clearAllHistoryBtn = document.getElementById('clearAllHistoryBtn');
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
 
-        // Init App
-        function initApp() {
-            setupSpeechRecognition();
-            renderHistoryList();
+    function handleSend() {
+      const text = userInput.value.trim();
+      if (!text) return;
 
-            if (chats.length > 0) {
-                if (!currentChatId || !chats.find(c => c.id === currentChatId)) {
-                    currentChatId = chats[0].id;
-                }
-                loadChat(currentChatId);
-            } else {
-                createNewChatSession();
-            }
+      appendMessage('user', text);
+      userInput.value = '';
+      
+      // Typing indicator
+      const loadingId = appendLoading();
 
-            // Input handlers
-            userInput.addEventListener('input', function() {
-                this.style.height = 'auto';
-                t
+      setTimeout(() => {
+        removeLoading(loadingId);
+        generateResponse(text);
+      }, 600);
+    }
+
+    function appendMessage(sender, text) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = sender === 'user' ? 'flex justify-end' : 'flex justify-start';
+
+      const innerDiv = document.createElement('div');
+      innerDiv.className = sender === 'user' 
+        ? 'bg-slate-200 text-black px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-[85%] text-sm font-medium'
+        : 'bg-card border border-border text-slate-200 px-4 py-2.5 rounded-2xl rounded-tl-sm max-w-[85%] text-sm leading-relaxed';
+
+      innerDiv.innerHTML = sender === 'user' ? escapeHtml(text) : marked.parse(text);
+      msgDiv.appendChild(innerDiv);
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function appendLoading() {
+      const id = 'load-' + Date.now();
+      const loadDiv = document.createElement('div');
+      loadDiv.id = id;
+      loadDiv.className = 'flex justify-start';
+      loadDiv.innerHTML = `<div class="bg-card border border-border px-4 py-3 rounded-2xl text-xs text-slate-400 animate-pulse">RYZE is thinking...</div>`;
+      chatBox.appendChild(loadDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      return id;
+    }
+
+    function removeLoading(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    function generateResponse(query) {
+      let reply = "I'm RYZE! " + query + " received. I can search live info, help you write code, or answer any questions quickly!";
+      if (query.toLowerCase().includes('hi') || query.toLowerCase().includes('hello')) {
+        reply = "Hello! How can I help you today?";
+      }
+      appendMessage('bot', reply);
+    }
+
+    function clearChat() {
+      chatBox.innerHTML = '';
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+  </script>
+</body>
+</html>
